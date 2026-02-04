@@ -124,8 +124,15 @@ pub async fn ai_suggestion(last_command: &str, error_msg: &str, locale: &str) {
 		.header("Content-Type", "application/json")
 		.bearer_auth(&conf.key)
 		.send()
-		.await
-		.unwrap();
+		.await;
+
+	let res = match res {
+		Ok(res) => res,
+		Err(err) => {
+			eprintln!("AI module: Request error: {}", err);
+			return;
+		}
+	};
 
 	if res.status() != 200 {
 		eprintln!("AI module: Status code: {}", res.status());
